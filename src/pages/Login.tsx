@@ -19,6 +19,7 @@ import {
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { authService } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
+import { LoginRequest } from '@/types';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Format d\'email invalide' }),
@@ -43,7 +44,12 @@ const Login = () => {
   const onSubmit = async (values: LoginFormValues) => {
     try {
       setIsLoading(true);
-      const response = await authService.login(values);
+      // Explicitly cast the form values to LoginRequest to ensure type safety
+      const loginRequest: LoginRequest = {
+        email: values.email,
+        password: values.password,
+      };
+      const response = await authService.login(loginRequest);
       login(response.token, response.user);
     } catch (error: any) {
       console.error('Login error:', error);

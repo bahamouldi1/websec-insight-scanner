@@ -61,7 +61,7 @@ const Register = () => {
       navigate('/login');
     } catch (error: any) {
       console.error('Registration error:', error);
-      toast.error(error.response?.data?.message || 'Une erreur est survenue lors de l\'inscription');
+      toast.error(error.response?.data?.message || error.response?.data?.error || 'Une erreur est survenue lors de l\'inscription');
     } finally {
       setIsLoading(false);
     }

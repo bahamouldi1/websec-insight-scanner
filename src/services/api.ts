@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 import { 
   LoginRequest, 
@@ -34,11 +33,33 @@ api.interceptors.request.use((config) => {
 // Auth services
 export const authService = {
   login: async (credentials: LoginRequest): Promise<AuthResponse> => {
-    const response = await api.post<AuthResponse>('/api/auth/login', credentials);
+    const loginPayload = {
+      email: credentials.email,
+      motDePasse: credentials.password
+    };
+    const response = await api.post<AuthResponse>('/api/auth/login', loginPayload);
+    
+    if (response.data.utilisateur && response.data.token) {
+      return {
+        token: response.data.token,
+        user: {
+          id: response.data.utilisateur.id,
+          name: response.data.utilisateur.nom,
+          email: response.data.utilisateur.email,
+          role: response.data.utilisateur.role
+        }
+      };
+    }
     return response.data;
   },
   register: async (userData: RegisterRequest): Promise<void> => {
-    await api.post('/api/auth/register', userData);
+    const registerPayload = {
+      nom: userData.name,
+      email: userData.email,
+      motDePasse: userData.password,
+      role: 'USER'
+    };
+    await api.post('/api/auth/register', registerPayload);
   },
 };
 
